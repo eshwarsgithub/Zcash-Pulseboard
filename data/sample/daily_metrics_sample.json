@@ -1,0 +1,122 @@
+[
+  {
+    "date": "2025-11-23",
+    "total_transactions": 18532,
+    "shielded_transactions": 4120,
+    "transparent_transactions": 14412,
+    "shielded_volume_zec": 13850.7,
+    "transparent_volume_zec": 45210.9,
+    "avg_fee_zec": 0.00021,
+    "median_fee_zec": 0.00014,
+    "avg_block_time_seconds": 78.2,
+    "active_addresses": 10241
+  },
+  {
+    "date": "2025-11-24",
+    "total_transactions": 19205,
+    "shielded_transactions": 4312,
+    "transparent_transactions": 14893,
+    "shielded_volume_zec": 14210.5,
+    "transparent_volume_zec": 47001.4,
+    "avg_fee_zec": 0.00024,
+    "median_fee_zec": 0.00016,
+    "avg_block_time_seconds": 77.6,
+    "active_addresses": 10810
+  },
+  {
+    "date": "2025-11-25",
+    "total_transactions": 21044,
+    "shielded_transactions": 5120,
+    "transparent_transactions": 15924,
+    "shielded_volume_zec": 15801.9,
+    "transparent_volume_zec": 49890.3,
+    "avg_fee_zec": 0.00026,
+    "median_fee_zec": 0.00018,
+    "avg_block_time_seconds": 76.3,
+    "active_addresses": 11702
+  },
+  {
+    "date": "2025-11-26",
+    "total_transactions": 20555,
+    "shielded_transactions": 4982,
+    "transparent_transactions": 15573,
+    "shielded_volume_zec": 15250.2,
+    "transparent_volume_zec": 48910.8,
+    "avg_fee_zec": 0.00025,
+    "median_fee_zec": 0.00017,
+    "avg_block_time_seconds": 78.8,
+    "active_addresses": 11104
+  },
+  {
+    "date": "2025-11-27",
+    "total_transactions": 21402,
+    "shielded_transactions": 5481,
+    "transparent_transactions": 15921,
+    "shielded_volume_zec": 16320.4,
+    "transparent_volume_zec": 51230.9,
+    "avg_fee_zec": 0.00023,
+    "median_fee_zec": 0.00015,
+    "avg_block_time_seconds": 77.9,
+    "active_addresses": 11988
+  },
+  {
+    "date": "2025-11-28",
+    "total_transactions": 22840,
+    "shielded_transactions": 5982,
+    "transparent_transactions": 16858,
+    "shielded_volume_zec": 17542.7,
+    "transparent_volume_zec": 53418.1,
+    "avg_fee_zec": 0.00028,
+    "median_fee_zec": 0.00019,
+    "avg_block_time_seconds": 75.8,
+    "active_addresses": 12733
+  },
+  {
+    "date": "2025-11-29",
+    "total_transactions": 23614,
+    "shielded_transactions": 6421,
+    "transparent_transactions": 17193,
+    "shielded_volume_zec": 18240.6,
+    "transparent_volume_zec": 54428.0,
+    "avg_fee_zec": 0.00031,
+    "median_fee_zec": 0.00021,
+    "avg_block_time_seconds": 74.9,
+    "active_addresses": 13218
+  },
+  {
+    "date": "2025-11-30",
+    "total_transactions": 24402,
+    "shielded_transactions": 6895,
+    "transparent_transactions": 17507,
+    "shielded_volume_zec": 19104.5,
+    "transparent_volume_zec": 55980.4,
+    "avg_fee_zec": 0.00034,
+    "median_fee_zec": 0.00022,
+    "avg_block_time_seconds": 74.2,
+    "active_addresses": 13794
+  },
+  {
+    "date": "2025-12-01",
+    "total_transactions": 23880,
+    "shielded_transactions": 7010,
+    "transparent_transactions": 16870,
+    "shielded_volume_zec": 18890.1,
+    "transparent_volume_zec": 54810.0,
+    "avg_fee_zec": 0.00029,
+    "median_fee_zec": 0.0002,
+    "avg_block_time_seconds": 75.1,
+    "active_addresses": 13502
+  },
+  {
+    "date": "2025-12-02",
+    "total_transactions": 25110,
+    "shielded_transactions": 7420,
+    "transparent_transactions": 17690,
+    "shielded_volume_zec": 19642.8,
+    "transparent_volume_zec": 56894.2,
+    "avg_fee_zec": 0.00032,
+    "median_fee_zec": 0.00021,
+    "avg_block_time_seconds": 73.7,
+    "active_addresses": 14117
+  }
+]
