@@ -9,7 +9,7 @@ const trendColor: Record<"up" | "down" | "flat", string> = {
 };
 
 const statusBadge: Record<KPICard["status"], string> = {
-  good: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30",
+  good: "bg-accent/15 text-accent border border-accent/30",
   warning: "bg-warning/15 text-warning border border-warning/30",
   critical: "bg-danger/15 text-danger border border-danger/30"
 };
@@ -42,23 +42,54 @@ interface MetricCardProps {
 }
 
 export function MetricCard({ card }: MetricCardProps) {
+  const gradientMap = {
+    good: "from-accent/5 to-accent/0",
+    warning: "from-amber-500/5 to-amber-500/0",
+    critical: "from-rose-500/5 to-rose-500/0"
+  };
+
   return (
-    <div className="rounded-xl bg-panel p-4 shadow-sm shadow-black/40">
-      <div className="flex items-center justify-between">
-        <div className="text-sm uppercase tracking-wide text-slate-300">{card.name}</div>
-        <span className={clsx("rounded-full px-2 py-0.5 text-xs font-semibold", statusBadge[card.status])}>
-          {card.status.toUpperCase()}
-        </span>
-      </div>
-      <div className="mt-2 text-3xl font-semibold text-white">
-        {formatValue(card.value, card.unit)}
-      </div>
-      <div className="mt-1 text-sm text-slate-400">{card.insight}</div>
-      {card.delta_percent !== undefined && card.delta_percent !== null && card.trend && (
-        <div className={clsx("mt-2 text-sm", trendColor[card.trend])}>
-          {formatDelta(card.delta_percent, card.trend, card.unit)}
+    <div className={clsx(
+      "group relative rounded-xl bg-gradient-to-br backdrop-blur-sm p-5 shadow-lg shadow-black/40",
+      "border border-white/5 hover:border-white/10 transition-all duration-300",
+      "hover:shadow-xl hover:shadow-black/60 hover:-translate-y-0.5",
+      gradientMap[card.status]
+    )}>
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+      <div className="relative">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-xs uppercase tracking-wider text-slate-400 font-medium">{card.name}</div>
+          <span className={clsx(
+            "rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide",
+            "shadow-sm transition-all duration-200",
+            statusBadge[card.status]
+          )}>
+            {card.status}
+          </span>
         </div>
-      )}
+
+        <div className="text-3xl font-bold text-white mb-2 tracking-tight">
+          {formatValue(card.value, card.unit)}
+        </div>
+
+        <div className="text-xs text-slate-400 leading-relaxed min-h-[32px]">{card.insight}</div>
+
+        {card.delta_percent !== undefined && card.delta_percent !== null && card.trend && (
+          <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-white/5">
+            <span className={clsx(
+              "text-sm font-semibold flex items-center gap-1",
+              trendColor[card.trend]
+            )}>
+              {card.trend === "up" && "↗"}
+              {card.trend === "down" && "↘"}
+              {card.trend === "flat" && "→"}
+              {formatDelta(card.delta_percent, card.trend, card.unit)}
+            </span>
+            <span className="text-[10px] text-slate-500">vs previous</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

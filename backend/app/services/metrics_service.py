@@ -10,6 +10,9 @@ from ..models.metrics import (
     KPICard,
     MetricsPayload,
     MetricsSummary,
+    NetworkHealthDetailed,
+    PrivacyMetricsResponse,
+    PrivacyTrend,
 )
 from .insights_service import InsightBuilder
 
@@ -221,3 +224,79 @@ class MetricsService:
         if delta >= warning:
             return "warning"
         return "good"
+
+    def get_privacy_metrics(self, days: int = 30) -> PrivacyMetricsResponse:
+        """Calculate privacy-focused metrics from existing data."""
+        frame = self._repository.get_daily_metrics(days)
+        trends = []
+
+        for row in frame.to_dicts():
+            # Privacy score: weighted average (tx ratio 60%, volume ratio 40%)
+            score = (row['shielded_tx_ratio'] * 0.6 +
+                     row['shielded_volume_ratio'] * 0.4) * 100
+            trends.append(PrivacyTrend(
+                date=row['date'],
+                shielded_tx_pct=round(row['shielded_tx_ratio'] * 100, 2),
+                shielded_volume_pct=round(row['shielded_volume_ratio'] * 100, 2),
+                privacy_score=round(score, 2)
+            ))
+
+        latest = trends[-1].privacy_score
+        avg_7d = sum(t.privacy_score for t in trends[-7:]) / 7
+        grade = self._calculate_privacy_grade(avg_7d)
+
+        return PrivacyMetricsResponse(
+            trends=trends,
+            latest_score=latest,
+            avg_7d_score=round(avg_7d, 2),
+            privacy_grade=grade
+        )
+
+    @staticmethod
+    def _calculate_privacy_grade(score: float) -> str:
+        """Convert privacy score to letter grade."""
+        if score >= 45:
+            return "Excellent"
+        if score >= 35:
+            return "Good"
+        if score >= 25:
+            return "Fair"
+        return "Poor"
+
+    def get_network_health_detailed(self) -> NetworkHealthDetailed:
+        """Enhanced health score with component breakdown."""
+        summary = self.get_summary()
+
+        # Convert health status to scores
+        score_map = {"good": 100, "warning": 60, "critical": 20}
+        scores = {k: score_map[v] for k, v in summary.health.items()}
+        overall = sum(scores.values()) // len(scores)
+
+        # Calculate grade
+        if overall >= 95:
+            grade = "A+"
+        elif overall >= 85:
+            grade = "A"
+        elif overall >= 70:
+            grade = "B"
+        elif overall >= 50:
+            grade = "C"
+        elif overall >= 30:
+            grade = "D"
+        else:
+            grade = "F"
+
+        # Identify issues
+        issues = [f"{k.title()} needs attention"
+                  for k, v in summary.health.items() if v != "good"]
+
+        # Calculate trend (simplified: stable for now)
+        trend = "stable"
+
+        return NetworkHealthDetailed(
+            overall_score=overall,
+            component_scores=scores,
+            grade=grade,
+            trend=trend,
+            issues=issues
+        )

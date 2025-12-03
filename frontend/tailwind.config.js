@@ -4,11 +4,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "#05070f",
-        panel: "#10131f",
-        accent: "#24dbb5",
+        background: {
+          DEFAULT: "#0a0612",
+          panel: "#271219",
+          panelLight: "#3D1F2B"
+        },
+        accent: {
+          DEFAULT: "#F3B724",
+          hover: "#FFD666",
+          muted: "#C99410"
+        },
+        burgundy: {
+          dark: "#1A0D11",
+          DEFAULT: "#271219",
+          light: "#3D1F2B"
+        },
+        success: "#F3B724",
         warning: "#f5a623",
-        danger: "#ff5a5f"
+        danger: "#ff5a5f",
+        info: "#60a5fa",
+        // Legacy support
+        panel: "#271219"
       }
     }
   },

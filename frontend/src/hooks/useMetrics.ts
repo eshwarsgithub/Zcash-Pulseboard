@@ -85,3 +85,41 @@ export const useSummary = () =>
     queryFn: async () => (await api.get<MetricsSummary>("/metrics/summary")).data,
     staleTime: 5 * 60 * 1000
   });
+
+export interface PrivacyTrend {
+  date: string;
+  shielded_tx_pct: number;
+  shielded_volume_pct: number;
+  privacy_score: number;
+}
+
+export interface PrivacyMetricsResponse {
+  trends: PrivacyTrend[];
+  latest_score: number;
+  avg_7d_score: number;
+  privacy_grade: string;
+}
+
+export interface NetworkHealth {
+  overall_score: number;
+  component_scores: Record<string, number>;
+  grade: string;
+  trend: string;
+  issues: string[];
+}
+
+export const usePrivacyMetrics = () =>
+  useQuery<PrivacyMetricsResponse>({
+    queryKey: ["privacy-metrics"],
+    queryFn: async () => (await api.get<PrivacyMetricsResponse>("/metrics/privacy")).data,
+    staleTime: 5 * 60 * 1000
+  });
+
+export const useNetworkHealth = () =>
+  useQuery<NetworkHealth>({
+    queryKey: ["network-health"],
+    queryFn: async () => (await api.get<NetworkHealth>("/metrics/health")).data,
+    staleTime: 5 * 60 * 1000
+  });
+
+export default api;

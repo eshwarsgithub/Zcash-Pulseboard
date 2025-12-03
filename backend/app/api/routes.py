@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from ..models.metrics import AlertFeed, MetricsPayload, MetricsSummary
+from ..models.metrics import (
+    AlertFeed,
+    MetricsPayload,
+    MetricsSummary,
+    NetworkHealthDetailed,
+    PrivacyMetricsResponse,
+)
 from ..services.metrics_service import MetricsService
 
 router = APIRouter()
@@ -36,3 +42,15 @@ def fetch_summary(service: MetricsService = Depends(get_service)) -> MetricsSumm
 @router.get("/alerts", response_model=AlertFeed)
 def fetch_alerts(service: MetricsService = Depends(get_service)) -> AlertFeed:
     return service.get_alerts(limit=10)
+
+
+@router.get("/metrics/privacy", response_model=PrivacyMetricsResponse)
+def fetch_privacy_metrics(service: MetricsService = Depends(get_service)) -> PrivacyMetricsResponse:
+    """Get privacy-focused analytics."""
+    return service.get_privacy_metrics(days=30)
+
+
+@router.get("/metrics/health", response_model=NetworkHealthDetailed)
+def fetch_network_health(service: MetricsService = Depends(get_service)) -> NetworkHealthDetailed:
+    """Get detailed network health score."""
+    return service.get_network_health_detailed()

@@ -16,3 +16,19 @@ export const useAlerts = () => useQuery({
     queryFn: async () => (await api.get("/alerts")).data,
     refetchInterval: 60 * 1000
 });
+export const useSummary = () => useQuery({
+    queryKey: ["summary"],
+    queryFn: async () => (await api.get("/metrics/summary")).data,
+    staleTime: 5 * 60 * 1000
+});
+export const usePrivacyMetrics = () => useQuery({
+    queryKey: ["privacy-metrics"],
+    queryFn: async () => (await api.get("/metrics/privacy")).data,
+    staleTime: 5 * 60 * 1000
+});
+export const useNetworkHealth = () => useQuery({
+    queryKey: ["network-health"],
+    queryFn: async () => (await api.get("/metrics/health")).data,
+    staleTime: 5 * 60 * 1000
+});
+export default api;

@@ -59,3 +59,25 @@ class Alert(BaseModel):
 
 class AlertFeed(BaseModel):
     alerts: List[Alert]
+
+
+class PrivacyTrend(BaseModel):
+    date: date
+    shielded_tx_pct: float
+    shielded_volume_pct: float
+    privacy_score: float  # 0-100 weighted composite
+
+
+class PrivacyMetricsResponse(BaseModel):
+    trends: List[PrivacyTrend]
+    latest_score: float
+    avg_7d_score: float
+    privacy_grade: str  # "Excellent", "Good", "Fair", "Poor"
+
+
+class NetworkHealthDetailed(BaseModel):
+    overall_score: int  # 0-100
+    component_scores: Dict[str, int]  # throughput, privacy, cost, participation
+    grade: str  # "A+", "A", "B", "C", "D", "F"
+    trend: str  # "improving", "stable", "declining"
+    issues: List[str]  # Human-readable issues
