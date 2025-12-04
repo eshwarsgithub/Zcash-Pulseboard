@@ -27,7 +27,10 @@ class Settings(BaseSettings):
     coingecko_api_key: Optional[str] = None
 
     # Database
-    db_path: Path = Path(__file__).resolve().parents[3] / "data" / "zcash_pulse.duckdb"
+    # Use environment variable if set, otherwise use a flexible path
+    # In production (Railway), this will be in /app/data
+    # In development, it will be in the project root's data directory
+    db_path: Path = Path(__file__).resolve().parent.parent / "data" / "zcash_pulse.duckdb"
 
     # Scheduler Configuration
     refresh_interval_minutes: int = 5
@@ -56,7 +59,13 @@ class Settings(BaseSettings):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._configure_logging()
+        self._ensure_data_directory()
         self._log_configuration()
+
+    def _ensure_data_directory(self):
+        """Ensure the data directory exists."""
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Data directory ensured at: {self.db_path.parent}")
 
     def _configure_logging(self):
         """Configure logging level from settings."""
