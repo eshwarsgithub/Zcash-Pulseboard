@@ -3,19 +3,41 @@ import {
   AreaChart,
   CartesianGrid,
   Legend,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis
 } from "recharts";
 
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import type { DailyMetric } from "../hooks/useMetrics";
+
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 interface TrendChartProps {
   data: DailyMetric[];
 }
 
 export function TrendChart({ data }: TrendChartProps) {
+  // Fetch alerts to show anomaly markers
+  const { data: alertsData } = useQuery({
+    queryKey: ["alerts"],
+    queryFn: async () => {
+      const response = await axios.get(`${API_BASE}/api/alerts`);
+      return response.data;
+    },
+    refetchInterval: 60000,
+  });
+
+  // Extract unique dates from alerts (convert timestamp to date string)
+  const anomalyDates = new Set(
+    alertsData?.alerts?.map((alert: any) =>
+      alert.timestamp.split('T')[0]
+    ) || []
+  );
+
   return (
     <div className="group h-80 w-full rounded-xl bg-gradient-to-br from-panel/80 to-panel/40 backdrop-blur-sm p-6 shadow-lg shadow-black/40 border border-white/5 hover:border-white/10 transition-all duration-300">
       <div className="flex items-center justify-between mb-4">
@@ -29,6 +51,12 @@ export function TrendChart({ data }: TrendChartProps) {
             <div className="w-3 h-3 rounded-full bg-blue-400"></div>
             <span className="text-slate-400">Transparent</span>
           </div>
+          {anomalyDates.size > 0 && (
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-rose-500"></div>
+              <span className="text-slate-400">Anomaly</span>
+            </div>
+          )}
         </div>
       </div>
       <ResponsiveContainer width="100%" height="85%">
@@ -82,6 +110,23 @@ export function TrendChart({ data }: TrendChartProps) {
             fill="url(#transparentGradient)"
             name="Transparent Tx"
           />
+          {/* Anomaly markers */}
+          {Array.from(anomalyDates).map((date) => (
+            <ReferenceLine
+              key={date}
+              x={date}
+              stroke="#ef4444"
+              strokeWidth={2}
+              strokeDasharray="5 5"
+              label={{
+                value: "!",
+                position: "top",
+                fill: "#ef4444",
+                fontSize: 14,
+                fontWeight: "bold",
+              }}
+            />
+          ))}
         </AreaChart>
       </ResponsiveContainer>
     </div>

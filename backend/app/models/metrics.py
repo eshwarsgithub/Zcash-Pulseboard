@@ -81,3 +81,39 @@ class NetworkHealthDetailed(BaseModel):
     grade: str  # "A+", "A", "B", "C", "D", "F"
     trend: str  # "improving", "stable", "declining"
     issues: List[str]  # Human-readable issues
+
+
+class MomentumResponse(BaseModel):
+    momentum_7d: float  # 7-day momentum score
+    momentum_30d: float  # 30-day momentum score
+    trend: str  # "up", "down", "stable"
+    interpretation: str  # Human-readable explanation
+
+
+class MetadataResponse(BaseModel):
+    last_updated: datetime
+    data_source: str  # "live" or "sample"
+    next_refresh: Optional[datetime]
+    total_records: int
+
+
+class ExportFormat(BaseModel):
+    """Request format for data export."""
+    format: Literal["csv", "json"] = "csv"
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    include_alerts: bool = False
+
+
+class PoolAdoptionTrend(BaseModel):
+    date: date
+    shielded_adoption_pct: float  # % of transactions using shielded pools
+    velocity: float  # Rate of change in adoption
+
+
+class PoolMigrationResponse(BaseModel):
+    trends: List[PoolAdoptionTrend]
+    current_adoption: float  # Current shielded %
+    avg_7d_adoption: float  # 7-day average
+    adoption_velocity: float  # Current velocity (positive = growing, negative = declining)
+    forecast_30d: float  # Simple 30-day forecast

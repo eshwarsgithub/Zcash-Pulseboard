@@ -1,7 +1,14 @@
+import { motion } from "framer-motion";
+import { Toaster } from "react-hot-toast";
 import { AlertsFeed } from "./components/AlertsFeed";
+import { AnimatedBackground } from "./components/AnimatedBackground";
+import { DataFreshnessIndicator } from "./components/DataFreshnessIndicator";
+import { ExportButton } from "./components/ExportButton";
 import { InsightPanel } from "./components/InsightPanel";
 import { MetricCard } from "./components/MetricCard";
+import { MomentumCard } from "./components/MomentumCard";
 import { NetworkHealthCard } from "./components/NetworkHealthCard";
+import { PoolMigrationCard } from "./components/PoolMigrationCard";
 import { PrivacyPanel } from "./components/PrivacyPanel";
 import { TrendChart } from "./components/TrendChart";
 import { useAlerts, useDailyMetrics, useKpis } from "./hooks/useMetrics";
@@ -12,25 +19,78 @@ export default function App() {
   const { data: alerts, isLoading: alertsLoading } = useAlerts();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-slate-950 p-6 text-white">
-      {/* Header with gradient accent */}
-      <header className="mb-8">
-        <div className="flex items-center gap-3">
-          <div className="h-12 w-1 bg-gradient-to-b from-accent via-accent-hover to-warning rounded-full"></div>
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-              Zcash Pulseboard
-            </h1>
-            <p className="text-slate-400 mt-1">Privacy-first network intelligence and alerts</p>
+    <>
+      <AnimatedBackground />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "#1A0D11",
+            color: "#fff",
+            border: "1px solid #F3B724",
+            borderRadius: "12px",
+          },
+          success: {
+            iconTheme: {
+              primary: "#F3B724",
+              secondary: "#1A0D11",
+            },
+          },
+        }}
+      />
+      <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-slate-950 p-6 text-white">
+        {/* Header with gradient accent */}
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-8"
+        >
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-1 bg-gradient-to-b from-accent via-accent-hover to-warning rounded-full"></div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-accent to-slate-300 bg-clip-text text-transparent animate-gradient-x">
+                Zcash Pulseboard
+              </h1>
+              <p className="text-slate-400 mt-1">Privacy-first network intelligence and alerts</p>
+            </motion.div>
           </div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex items-center gap-3"
+          >
+            <DataFreshnessIndicator />
+            <ExportButton type="metrics" label="Export Data" />
+          </motion.div>
         </div>
-      </header>
+      </motion.header>
 
       <main className="grid gap-6 lg:grid-cols-3">
         {/* Main Content */}
         <section className="lg:col-span-2 space-y-6">
           {/* KPI Cards */}
-          <div className="grid gap-4 sm:grid-cols-2">
+          <motion.div
+            className="grid gap-4 sm:grid-cols-2"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.4,
+                },
+              },
+            }}
+          >
             {kpiLoading && (
               <>
                 <div className="animate-pulse rounded-xl bg-panel/50 backdrop-blur-sm p-4 h-32 border border-white/5">
@@ -43,10 +103,18 @@ export default function App() {
                 </div>
               </>
             )}
-            {kpis?.cards.map((card) => (
-              <MetricCard key={card.name} card={card} />
+            {kpis?.cards.map((card, index) => (
+              <motion.div
+                key={card.name}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+              >
+                <MetricCard card={card} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Chart */}
           <div className="transition-all duration-300 hover:scale-[1.01]">
@@ -66,6 +134,11 @@ export default function App() {
             <PrivacyPanel />
           </div>
 
+          {/* Pool Migration Panel */}
+          <div className="transition-all duration-300">
+            <PoolMigrationCard />
+          </div>
+
           {/* Insights */}
           {kpis && (
             <div className="transition-all duration-300">
@@ -78,6 +151,9 @@ export default function App() {
         <aside className="space-y-6">
           {/* Network Health Card */}
           <NetworkHealthCard />
+
+          {/* Privacy Momentum Card */}
+          <MomentumCard />
 
           {/* Alerts Feed */}
           {alertsLoading && (
@@ -92,5 +168,6 @@ export default function App() {
         </aside>
       </main>
     </div>
+    </>
   );
 }

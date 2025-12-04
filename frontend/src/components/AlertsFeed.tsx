@@ -1,3 +1,4 @@
+import { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -31,6 +32,13 @@ interface AlertsFeedProps {
 }
 
 export function AlertsFeed({ alerts }: AlertsFeedProps) {
+  const [filter, setFilter] = useState<"all" | Alert["severity"]>("all");
+
+  // Filter alerts based on selected severity
+  const filteredAlerts = filter === "all"
+    ? alerts
+    : alerts.filter(alert => alert.severity === filter);
+
   return (
     <div className="h-full rounded-xl bg-gradient-to-br from-panel/80 to-panel/40 backdrop-blur-sm p-5 shadow-lg shadow-black/40 border border-white/5 hover:border-white/10 transition-all duration-300">
       <div className="flex items-center justify-between mb-4">
@@ -39,18 +47,64 @@ export function AlertsFeed({ alerts }: AlertsFeedProps) {
           Alerts
         </h3>
         <span className="text-xs font-semibold uppercase tracking-wide text-slate-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
-          {alerts.length} active
+          {filteredAlerts.length} active
         </span>
       </div>
 
-      <ul className="space-y-3 overflow-y-auto pr-2 max-h-[calc(100vh-250px)] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        {alerts.length === 0 ? (
+      {/* Filter buttons */}
+      <div className="flex gap-2 mb-4 flex-wrap">
+        <button
+          onClick={() => setFilter("all")}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
+            filter === "all"
+              ? "bg-white/20 text-white border border-white/30"
+              : "bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10"
+          }`}
+        >
+          All
+        </button>
+        <button
+          onClick={() => setFilter("high")}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
+            filter === "high"
+              ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+              : "bg-white/5 text-slate-400 border border-white/10 hover:bg-rose-500/10"
+          }`}
+        >
+          🚨 High
+        </button>
+        <button
+          onClick={() => setFilter("medium")}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
+            filter === "medium"
+              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+              : "bg-white/5 text-slate-400 border border-white/10 hover:bg-amber-500/10"
+          }`}
+        >
+          ⚠️ Medium
+        </button>
+        <button
+          onClick={() => setFilter("low")}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
+            filter === "low"
+              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+              : "bg-white/5 text-slate-400 border border-white/10 hover:bg-emerald-500/10"
+          }`}
+        >
+          ℹ️ Low
+        </button>
+      </div>
+
+      <ul className="space-y-3 overflow-y-auto pr-2 max-h-[calc(100vh-350px)] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+        {filteredAlerts.length === 0 ? (
           <li className="text-center py-12 text-slate-400">
             <div className="text-4xl mb-3">✨</div>
-            <p className="text-sm">All clear! No active alerts.</p>
+            <p className="text-sm">
+              {alerts.length === 0 ? "All clear! No active alerts." : "No alerts matching this filter."}
+            </p>
           </li>
         ) : (
-          alerts.map((alert) => {
+          filteredAlerts.map((alert) => {
             const config = severityConfig[alert.severity];
             return (
               <li

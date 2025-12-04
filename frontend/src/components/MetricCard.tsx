@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+import CountUp from "react-countup";
 import clsx from "clsx";
 
 import type { KPICard } from "../hooks/useMetrics";
@@ -49,29 +51,80 @@ export function MetricCard({ card }: MetricCardProps) {
   };
 
   return (
-    <div className={clsx(
-      "group relative rounded-xl bg-gradient-to-br backdrop-blur-sm p-5 shadow-lg shadow-black/40",
-      "border border-white/5 hover:border-white/10 transition-all duration-300",
-      "hover:shadow-xl hover:shadow-black/60 hover:-translate-y-0.5",
-      gradientMap[card.status]
-    )}>
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ scale: 1.02, rotateY: 2 }}
+      className={clsx(
+        "group relative rounded-xl bg-gradient-to-br backdrop-blur-sm p-5 shadow-lg shadow-black/40",
+        "border border-white/5 hover:border-accent/30 transition-all duration-300",
+        "hover:shadow-2xl hover:shadow-accent/20",
+        gradientMap[card.status]
+      )}
+    >
+      {/* Animated shine effect */}
+      <motion.div
+        className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/5 to-transparent"
+        animate={{
+          x: ["-200%", "200%"],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          repeatDelay: 5,
+          ease: "linear",
+        }}
+      />
+
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent/0 via-accent/10 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
       <div className="relative">
         <div className="flex items-center justify-between mb-3">
-          <div className="text-xs uppercase tracking-wider text-slate-400 font-medium">{card.name}</div>
-          <span className={clsx(
-            "rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide",
-            "shadow-sm transition-all duration-200",
-            statusBadge[card.status]
-          )}>
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-xs uppercase tracking-wider text-slate-400 font-medium"
+          >
+            {card.name}
+          </motion.div>
+          <motion.span
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring" }}
+            className={clsx(
+              "rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide",
+              "shadow-sm transition-all duration-200",
+              statusBadge[card.status]
+            )}
+          >
             {card.status}
-          </span>
+          </motion.span>
         </div>
 
-        <div className="text-3xl font-bold text-white mb-2 tracking-tight">
-          {formatValue(card.value, card.unit)}
-        </div>
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.3, type: "spring" }}
+          className="text-3xl font-bold text-white mb-2 tracking-tight"
+        >
+          {card.unit === "%" ? (
+            <>
+              <CountUp end={card.value} decimals={2} duration={2} />%
+            </>
+          ) : card.unit === "ZEC" ? (
+            <>
+              <CountUp end={card.value} decimals={5} duration={2} /> ZEC
+            </>
+          ) : card.value >= 1000 ? (
+            <>
+              <CountUp end={card.value / 1000} decimals={1} duration={2} />k
+            </>
+          ) : (
+            <CountUp end={card.value} duration={2} />
+          )}
+        </motion.div>
 
         <div className="text-xs text-slate-400 leading-relaxed min-h-[32px]">{card.insight}</div>
 
@@ -90,6 +143,6 @@ export function MetricCard({ card }: MetricCardProps) {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -14,8 +14,11 @@
     "axios": "^1.6.7",
     "clsx": "^2.1.0",
     "dayjs": "^1.11.13",
+    "framer-motion": "^12.23.25",
     "react": "^18.3.1",
+    "react-countup": "^6.5.3",
     "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.6.0",
     "recharts": "^2.10.3"
   },
   "devDependencies": {
