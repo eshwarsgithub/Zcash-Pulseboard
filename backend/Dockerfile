@@ -14,8 +14,12 @@ COPY . .
 # Create data directory for DuckDB
 RUN mkdir -p /app/data
 
+# Copy and make startup script executable
+COPY start.sh .
+RUN chmod +x start.sh
+
 # Expose port
 EXPOSE 8000
 
-# Start command - Use sh -c for proper environment variable expansion
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Use startup script that properly handles PORT variable
+CMD ["./start.sh"]
