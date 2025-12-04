@@ -4,6 +4,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from .api.routes import router
 from .jobs.scheduler import create_scheduler
@@ -30,4 +31,16 @@ app = FastAPI(
     openapi_url="/openapi.json",
     lifespan=lifespan,
 )
+
+# Add CORS middleware for frontend
+# Allow all origins for development and production flexibility
+# In production, consider restricting to specific domains for security
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins - restrict in production if needed
+    allow_credentials=False,  # Set to False when using allow_origins=["*"]
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(router, prefix="/api", tags=["metrics"])

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../config/api";
 
 export interface DailyMetric {
   date: string;
@@ -55,8 +55,6 @@ export interface MetricsSummary {
   active_addresses_7d_avg: number;
   health: Record<"throughput" | "privacy" | "cost" | "participation", "good" | "warning" | "critical">;
 }
-
-const api = axios.create({ baseURL: "/api" });
 
 export const useDailyMetrics = () =>
   useQuery<MetricsResponse>({
@@ -122,4 +120,18 @@ export const useNetworkHealth = () =>
     staleTime: 5 * 60 * 1000
   });
 
-export default api;
+export interface MomentumResponse {
+  momentum_7d: number;
+  momentum_30d: number;
+  trend: string;
+  interpretation: string;
+}
+
+export const useMomentum = () =>
+  useQuery<MomentumResponse>({
+    queryKey: ["momentum"],
+    queryFn: async () => (await api.get<MomentumResponse>("/metrics/momentum")).data,
+    staleTime: 5 * 60 * 1000
+  });
+
+export { api };

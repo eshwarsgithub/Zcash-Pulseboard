@@ -1,3 +1,4 @@
+
 """Base API client with retry logic, rate limiting, and error handling."""
 
 from __future__ import annotations

@@ -11,10 +11,8 @@ import {
 } from "recharts";
 
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import type { DailyMetric } from "../hooks/useMetrics";
-
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import api from "../config/api";
 
 interface TrendChartProps {
   data: DailyMetric[];
@@ -25,7 +23,7 @@ export function TrendChart({ data }: TrendChartProps) {
   const { data: alertsData } = useQuery({
     queryKey: ["alerts"],
     queryFn: async () => {
-      const response = await axios.get(`${API_BASE}/api/alerts`);
+      const response = await api.get("/alerts");
       return response.data;
     },
     refetchInterval: 60000,

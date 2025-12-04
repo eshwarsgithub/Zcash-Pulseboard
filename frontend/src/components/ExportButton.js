@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useState } from "react";
 import toast from "react-hot-toast";
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import { API_BASE_URL } from "../config/api";
 export function ExportButton({ type, label }) {
     const [isExporting, setIsExporting] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
@@ -10,7 +10,7 @@ export function ExportButton({ type, label }) {
         setShowMenu(false);
         const loadingToast = toast.loading(`Exporting ${type} as ${format.toUpperCase()}...`);
         try {
-            const url = `${API_BASE}/api/export/${type}/${format}`;
+            const url = `${API_BASE_URL}/api/export/${type}/${format}`;
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Export failed: ${response.statusText}`);

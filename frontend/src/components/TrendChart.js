@@ -1,14 +1,13 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import api from "../config/api";
 export function TrendChart({ data }) {
     // Fetch alerts to show anomaly markers
     const { data: alertsData } = useQuery({
         queryKey: ["alerts"],
         queryFn: async () => {
-            const response = await axios.get(`${API_BASE}/api/alerts`);
+            const response = await api.get("/alerts");
             return response.data;
         },
         refetchInterval: 60000,

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import { API_BASE_URL } from "../config/api";
 
 interface ExportButtonProps {
   type: "metrics" | "alerts";
@@ -19,7 +18,7 @@ export function ExportButton({ type, label }: ExportButtonProps) {
     const loadingToast = toast.loading(`Exporting ${type} as ${format.toUpperCase()}...`);
 
     try {
-      const url = `${API_BASE}/api/export/${type}/${format}`;
+      const url = `${API_BASE_URL}/api/export/${type}/${format}`;
       const response = await fetch(url);
 
       if (!response.ok) {

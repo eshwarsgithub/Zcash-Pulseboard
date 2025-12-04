@@ -1,14 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import api from "../config/api";
 
 export function PoolMigrationCard() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["poolMigration"],
     queryFn: async () => {
-      const response = await axios.get(`${API_BASE}/api/metrics/pool-migration`);
+      const response = await api.get("/metrics/pool-migration");
       return response.data;
     },
     refetchInterval: 60000,

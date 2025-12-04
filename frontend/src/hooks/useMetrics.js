@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-const api = axios.create({ baseURL: "/api" });
+import api from "../config/api";
 export const useDailyMetrics = () => useQuery({
     queryKey: ["daily-metrics"],
     queryFn: async () => (await api.get("/metrics/daily")).data,
@@ -31,4 +30,9 @@ export const useNetworkHealth = () => useQuery({
     queryFn: async () => (await api.get("/metrics/health")).data,
     staleTime: 5 * 60 * 1000
 });
-export default api;
+export const useMomentum = () => useQuery({
+    queryKey: ["momentum"],
+    queryFn: async () => (await api.get("/metrics/momentum")).data,
+    staleTime: 5 * 60 * 1000
+});
+export { api };
