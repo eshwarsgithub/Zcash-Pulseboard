@@ -111,7 +111,7 @@ export function TrendChart({ data }: TrendChartProps) {
             name="Transparent Tx"
           />
           {/* Anomaly markers */}
-          {Array.from(anomalyDates).map((date) => (
+          {(Array.from(anomalyDates) as string[]).map((date) => (
             <ReferenceLine
               key={date}
               x={date}
