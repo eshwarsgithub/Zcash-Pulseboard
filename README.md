@@ -1,255 +1,225 @@
 # Zcash Pulseboard
 
-A privacy-first network intelligence and analytics dashboard for the Zcash blockchain. Real-time metrics, KPIs, alerts, and insights to monitor network health, privacy adoption, and shielded pool migration trends.
+**Real-time Zcash network analytics with privacy-focused insights and intelligent alerting.**
 
-## 🎯 Overview
+Zcash Pulseboard is a production-ready analytics and alerting platform built for the Zcash Data & Analytics hackathon bounty. It transforms live blockchain data into actionable privacy insights with statistical anomaly detection and real-time notifications.
 
-Zcash Pulseboard provides comprehensive analytics and alerting capabilities for monitoring the Zcash network. The platform tracks key metrics including transaction volumes, shielded pool adoption, network health, privacy trends, and generates actionable insights and alerts.
+## 🚀 Key Features
 
-## ✨ Features
-
-### Core Metrics & KPIs
-- **Total Transactions** - Daily transaction count with trend analysis
-- **Shielded Share** - Percentage of transactions using shielded pools
-- **Average Fee** - Network fee trends and cost analysis
-- **Active Addresses** - Network participation metrics
+### Live Data Integration
+- **Zchain API**: Real-time blockchain metrics (transactions, volumes, fees, block times)
+- **CoinGecko API**: Market data and price correlation
+- **Auto-refresh**: Configurable refresh intervals (default: 5 minutes)
+- **Graceful Fallback**: Automatically falls back to sample data if APIs are unavailable
 
 ### Advanced Analytics
-- **Privacy Metrics** - Privacy score calculation and trend analysis
-- **Network Health** - Comprehensive health scoring with component breakdown
-- **Shielded Pool Momentum** - Momentum index tracking privacy adoption trends
-- **Pool Migration** - Adoption velocity and migration forecasting
+- **Privacy Health Score**: 0-100 composite metric tracking network privacy adoption
+- **Shielded Pool Analytics**: Transaction and volume breakdown (shielded vs transparent)
+- **Network Health Dashboard**: A+ to F grading system with component breakdown
+- **Trend Analysis**: 30-day historical charts with interactive tooltips
 
-### Alerts & Insights
-- Real-time alert feed for network anomalies
-- Automated insight generation based on metric changes
-- Data freshness indicators
-- Export capabilities (CSV/JSON)
+### Intelligent Alerting
+- **Anomaly Detection**: Statistical z-score based detection (configurable threshold)
+- **Discord/Slack Integration**: Real-time webhook notifications for critical events
+- **Severity Levels**: High, medium, low with color-coded alerts
+- **Smart Filtering**: Configurable severity thresholds
 
-## 🏗️ Architecture
+### Modern UI
+- **Burgundy/Gold Theme**: Privacy-focused dark theme with Zcash branding
+- **Glassmorphism Design**: Modern backdrop blur and gradient effects
+- **Responsive Charts**: Interactive Recharts visualizations
+- **Real-time Updates**: React Query with automatic refetching
 
-### Backend (`/backend`)
-- **Framework**: FastAPI (Python 3.9+)
-- **Database**: DuckDB for analytics workloads
-- **Data Processing**: Polars for high-performance data operations
-- **Scheduling**: APScheduler for background jobs
-- **API**: RESTful API with OpenAPI documentation
+## 📊 Architecture
 
-### Frontend (`/frontend`)
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **Charts**: Recharts
-- **State Management**: TanStack Query (React Query)
+```
+Zchain API + CoinGecko
+       ↓
+   ETL Pipeline
+       ↓
+    DuckDB Warehouse
+       ↓
+   FastAPI Backend
+       ↓
+  React Dashboard
+```
+
+## Project Layout
+
+- `backend/` – FastAPI application with scheduled refresh jobs and analytics engine
+- `data/` – ETL pipeline with live API clients and sample data for development
+- `frontend/` – React dashboard with Tailwind CSS and Recharts visualizations
+- `notebooks/` – Reserved for exploratory analysis
+
+## 🚀 Quick Start
+
+### Requirements
+
+- Python 3.9+
+- Node.js 18+
+- (Optional) DuckDB CLI for inspecting the database
+
+### Installation
+
+```bash
+# 1. Install backend dependencies
+cd backend
+/Users/eshwar/Desktop/Z/.venv/bin/python -m pip install -U pip
+/Users/eshwar/Desktop/Z/.venv/bin/python -m pip install -e .[dev]
+/Users/eshwar/Desktop/Z/.venv/bin/pip install pydantic-settings pyarrow
+
+# 2. Install frontend dependencies
+cd ../frontend
+npm install
+
+# 3. Configure environment (optional)
+cd ../backend
+cp .env.example .env
+# Edit .env to add Discord webhook URL if desired
+```
+
+### Run the Stack
+
+```bash
+# Terminal 1: Backend API
+cd backend
+/Users/eshwar/Desktop/Z/.venv/bin/python -m uvicorn app.main:app --reload
+
+# Terminal 2: Frontend Dashboard
+cd frontend
+npm run dev
+```
+
+**Access the Dashboard:**
+- **Frontend**: http://localhost:5173
+- **API Documentation**: http://localhost:8000/docs
+- **Backend Health**: http://localhost:8000/api/health
+
+## ⚙️ Configuration
+
+Edit `backend/.env` to customize:
+
+```bash
+# Enable/disable live data fetching
+ENABLE_LIVE_DATA=true
+
+# Refresh interval (minutes)
+REFRESH_INTERVAL_MINUTES=5
+
+# Discord webhook for alerts
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR-WEBHOOK
+
+# Anomaly detection settings
+ENABLE_ANOMALY_DETECTION=true
+ANOMALY_ZSCORE_THRESHOLD=2.5
+ALERT_SEVERITY_THRESHOLD=medium
+```
+
+## 🧪 Testing
+
+```bash
+# Run backend tests
+cd backend
+/Users/eshwar/Desktop/Z/.venv/bin/python -m pytest
+
+# Test API connections
+cd ..
+/Users/eshwar/Desktop/Z/.venv/bin/python -c "
+import asyncio
+from data.etl.sources.zchain_client import ZchainClient
+from data.etl.sources.coingecko_client import CoinGeckoClient
+
+async def test():
+    async with ZchainClient() as z, CoinGeckoClient() as c:
+        print('Zchain:', 'OK' if await z.test_connection() else 'FAIL')
+        print('CoinGecko:', 'OK' if await c.test_connection() else 'FAIL')
+
+asyncio.run(test())
+"
+```
+
+## 📈 Key Metrics Tracked
+
+### On-Chain Metrics
+- Total daily transactions (shielded + transparent)
+- Shielded transaction count and percentage
+- Transaction volumes in ZEC
+- Average and median fees
+- Average block time
+- Active address count
+
+### Market Metrics
+- ZEC price (USD)
+- Market capitalization
+- 24h trading volume
+- Price change percentage
+
+### Privacy Metrics
+- Privacy Health Score (0-100)
+- Shielded transaction ratio
+- Shielded volume ratio
+- Privacy adoption trends
+
+## 🔔 Anomaly Detection
+
+The system automatically detects statistical anomalies using z-scores:
+
+- **Transaction Spikes/Drops**: >2σ deviation triggers alerts
+- **Fee Anomalies**: Unusual fee pressure detection
+- **Volume Changes**: Significant shifts in shielded/transparent volumes
+- **Address Activity**: Unusual network participation patterns
+
+Alerts are:
+- Stored in DuckDB for historical analysis
+- Sent to Discord/Slack webhooks (if configured)
+- Displayed in the dashboard with severity color-coding
+
+## 🎯 Hackathon Highlights
+
+**What Makes This Special:**
+1. **Live Data**: Real API integration with graceful fallback
+2. **Privacy Focus**: Unique Zcash-specific insights on shielded pool health
+3. **Anomaly Detection**: Statistical analysis, not just simple thresholds
+4. **Production Quality**: Error handling, logging, configuration management
+5. **Beautiful UI**: Modern design with glassmorphism and smooth animations
 
 ## 📁 Project Structure
 
 ```
-Z/
-├── backend/                 # FastAPI backend service
+├── backend/
 │   ├── app/
-│   │   ├── api/            # API routes and endpoints
-│   │   ├── db/             # Database client and repository
-│   │   ├── jobs/           # Background job scheduling
-│   │   ├── models/         # Pydantic models and schemas
-│   │   ├── services/       # Business logic services
-│   │   └── main.py         # FastAPI application entry point
-│   ├── tests/              # Test suite
-│   ├── Dockerfile          # Container configuration
-│   ├── requirements.txt    # Python dependencies
-│   └── pyproject.toml      # Project metadata
-│
-├── frontend/               # React frontend application
-│   ├── src/
-│   │   ├── components/     # React components
-│   │   ├── hooks/          # Custom React hooks
-│   │   ├── config/         # Configuration files
-│   │   └── styles/         # Global styles
-│   ├── package.json        # Node dependencies
-│   └── vite.config.ts      # Vite configuration
-│
-└── README.md               # This file
+│   │   ├── api/          # FastAPI routes
+│   │   ├── services/      # Business logic & analytics
+│   │   ├── models/        # Pydantic data models
+│   │   ├── jobs/          # APScheduler tasks
+│   │   ├── db/            # Database client
+│   │   └── config.py      # Settings management
+│   └── tests/             # Test suite
+├── data/
+│   ├── etl/
+│   │   ├── sources/       # API clients (Zchain, CoinGecko)
+│   │   ├── transformers/  # Anomaly detection
+│   │   └── pipeline.py    # ETL orchestration
+│   └── sample/            # Sample data for development
+└── frontend/
+    ├── src/
+    │   ├── components/    # React components
+    │   ├── hooks/         # React Query hooks
+    │   └── styles/        # Tailwind CSS
+    └── public/            # Static assets
 ```
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Python 3.9+** for backend
-- **Node.js 18+** and npm for frontend
-- **DuckDB** (installed via pip)
-
-### Backend Setup
-
-1. **Navigate to backend directory**:
-   ```bash
-   cd backend
-   ```
-
-2. **Create virtual environment**:
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Set up environment variables** (create `.env` file):
-   ```env
-   DATABASE_PATH=./data/zcash_pulse.duckdb
-   ENABLE_LIVE_DATA=false
-   REFRESH_INTERVAL_MINUTES=60
-   ```
-
-5. **Run the backend**:
-   ```bash
-   uvicorn app.main:app --reload --port 8000
-   ```
-
-   Or use the startup script:
-   ```bash
-   chmod +x start.sh
-   ./start.sh
-   ```
-
-6. **Access API documentation**:
-   - Swagger UI: http://localhost:8000/docs
-   - ReDoc: http://localhost:8000/redoc
-
-### Frontend Setup
-
-1. **Navigate to frontend directory**:
-   ```bash
-   cd frontend
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Configure API endpoint** (if needed):
-   Edit `src/config/api.ts` to point to your backend URL
-
-4. **Run development server**:
-   ```bash
-   npm run dev
-   ```
-
-5. **Access the application**:
-   - Frontend: http://localhost:5173
-   - API: http://localhost:8000
-
-### Docker Deployment
-
-**Backend**:
-```bash
-cd backend
-docker build -t zcash-pulse-backend .
-docker run -p 8000:8000 zcash-pulse-backend
-```
-
-## 📡 API Endpoints
-
-### Health & Metadata
-- `GET /api/health` - Health check endpoint
-- `GET /api/metrics/metadata` - Dataset metadata
-
-### Metrics
-- `GET /api/metrics/daily` - Daily metrics (last 30 days)
-- `GET /api/metrics/kpis` - Key performance indicators
-- `GET /api/metrics/summary` - 7-day summary with health scores
-- `GET /api/metrics/privacy` - Privacy-focused metrics
-- `GET /api/metrics/health` - Detailed network health score
-- `GET /api/metrics/momentum` - Shielded pool momentum index
-- `GET /api/metrics/pool-migration?days=30` - Pool migration trends
-
-### Alerts
-- `GET /api/alerts` - Alert feed (last 10 alerts)
-
-### Export
-- `GET /api/export/metrics/csv?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` - Export metrics as CSV
-- `GET /api/export/metrics/json?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` - Export metrics as JSON
-- `GET /api/export/alerts/csv?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` - Export alerts as CSV
-- `GET /api/export/alerts/json?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` - Export alerts as JSON
-
-## 🧪 Testing
-
-**Backend Tests**:
-```bash
-cd backend
-pytest tests/
-```
-
-**Frontend Linting**:
-```bash
-cd frontend
-npm run lint
-```
-
-## 🛠️ Development
-
-### Code Style
-
-**Backend**:
-- Uses `ruff` for linting
-- Uses `black` for code formatting
-- Line length: 100 characters
-
-**Frontend**:
-- TypeScript strict mode enabled
-- ESLint with Prettier configuration
-- React best practices
-
-### Adding New Metrics
-
-1. Add data model in `backend/app/models/metrics.py`
-2. Implement service logic in `backend/app/services/metrics_service.py`
-3. Add API route in `backend/app/api/routes.py`
-4. Create frontend component in `frontend/src/components/`
-5. Integrate into `frontend/src/App.tsx`
-
-## 📊 Data Sources
-
-The backend supports multiple data sources:
-- **Sample Data**: Pre-loaded sample data for development
-- **Live Data**: Real-time data fetching (configure via `ENABLE_LIVE_DATA`)
-
-## 🔒 Privacy & Security
-
-- CORS configured for frontend-backend communication
-- Environment variables for sensitive configuration
-- No sensitive data stored in repository
-- Database files excluded via `.gitignore`
-
-## 📝 License
-
-MIT License - See project metadata for details
-
-## 👥 Contributors
-
-Zcash Pulse Hackathon Team
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Built for the Zcash Data & Analytics hackathon bounty. Open source and ready for community contributions!
 
-## 📚 Additional Resources
+## 📜 License
 
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [React Documentation](https://react.dev/)
-- [DuckDB Documentation](https://duckdb.org/docs/)
-- [Polars Documentation](https://pola-rs.github.io/polars/)
+MIT
 
 ---
 
-**Note**: This project is actively maintained. For issues, feature requests, or questions, please open an issue on the repository.
+**Built with:** FastAPI • React • DuckDB • Tailwind CSS • Recharts • Polars • APScheduler
+
+**APIs:** Zchain • CoinGecko
 
