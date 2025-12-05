@@ -1,5 +1,0 @@
-api
-db
-jobs
-models
-services

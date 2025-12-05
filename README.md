@@ -1,8 +1,14 @@
-# Zcash Pulseboard
+# Zcash Pulseboard 📊
 
 **Real-time Zcash network analytics with privacy-focused insights and intelligent alerting.**
 
-Zcash Pulseboard is a production-ready analytics and alerting platform built for the Zcash Data & Analytics hackathon bounty. It transforms live blockchain data into actionable privacy insights with statistical anomaly detection and real-time notifications.
+Zcash Pulseboard is a production-ready analytics and alerting platform built for the Zcash Data & Analytics hackathon. It transforms live blockchain data into actionable privacy insights with statistical anomaly detection and real-time notifications.
+
+## 🌐 Live Demo
+
+- **Frontend**: https://zcash-pulseboard.vercel.app
+- **Backend API**: https://zcash-pulse-backend-70e9bddfb521.herokuapp.com
+- **API Docs**: https://zcash-pulse-backend-70e9bddfb521.herokuapp.com/docs
 
 ## 🚀 Key Features
 
@@ -17,6 +23,7 @@ Zcash Pulseboard is a production-ready analytics and alerting platform built for
 - **Shielded Pool Analytics**: Transaction and volume breakdown (shielded vs transparent)
 - **Network Health Dashboard**: A+ to F grading system with component breakdown
 - **Trend Analysis**: 30-day historical charts with interactive tooltips
+- **Pool Migration Tracking**: Monitor adoption trends with velocity metrics
 
 ### Intelligent Alerting
 - **Anomaly Detection**: Statistical z-score based detection (configurable threshold)
@@ -29,6 +36,7 @@ Zcash Pulseboard is a production-ready analytics and alerting platform built for
 - **Glassmorphism Design**: Modern backdrop blur and gradient effects
 - **Responsive Charts**: Interactive Recharts visualizations
 - **Real-time Updates**: React Query with automatic refetching
+- **Data Export**: CSV and JSON export functionality
 
 ## 📊 Architecture
 
@@ -39,66 +47,98 @@ Zchain API + CoinGecko
        ↓
     DuckDB Warehouse
        ↓
-   FastAPI Backend
+   FastAPI Backend (Heroku)
        ↓
-  React Dashboard
+  React Dashboard (Vercel)
 ```
 
-## Project Layout
+## 📁 Project Structure
 
-- `backend/` – FastAPI application with scheduled refresh jobs and analytics engine
-- `data/` – ETL pipeline with live API clients and sample data for development
-- `frontend/` – React dashboard with Tailwind CSS and Recharts visualizations
-- `notebooks/` – Reserved for exploratory analysis
+```
+zcash-pulseboard/
+├── backend/                # FastAPI application
+│   ├── app/
+│   │   ├── api/           # REST API routes
+│   │   ├── services/      # Business logic & analytics
+│   │   ├── models/        # Pydantic data models
+│   │   ├── jobs/          # APScheduler background tasks
+│   │   ├── db/            # DuckDB client
+│   │   ├── config.py      # Settings management
+│   │   └── main.py        # FastAPI application
+│   ├── data/              # DuckDB database file
+│   ├── tests/             # Test suite
+│   └── requirements.txt   # Python dependencies
+│
+├── data/                  # ETL pipeline
+│   ├── etl/
+│   │   ├── sources/       # API clients (Zchain, CoinGecko)
+│   │   ├── transformers/  # Anomaly detection
+│   │   └── pipeline.py    # ETL orchestration
+│   └── sample/            # Sample data for development
+│
+├── frontend/              # React dashboard
+│   ├── src/
+│   │   ├── components/    # React components (TypeScript)
+│   │   ├── hooks/         # React Query hooks
+│   │   ├── config/        # API configuration
+│   │   └── styles/        # Tailwind CSS
+│   ├── index.html
+│   └── package.json
+│
+├── Procfile               # Heroku deployment config
+├── runtime.txt            # Python version for Heroku
+├── requirements.txt       # Root requirements for Heroku
+└── vercel.json            # Vercel deployment config
+```
 
 ## 🚀 Quick Start
 
-### Requirements
-
-- Python 3.9+
+### Prerequisites
+- Python 3.11+
 - Node.js 18+
-- (Optional) DuckDB CLI for inspecting the database
+- (Optional) DuckDB CLI for database inspection
 
-### Installation
+### Local Development
+
+#### 1. Backend Setup
 
 ```bash
-# 1. Install backend dependencies
+# Navigate to backend directory
 cd backend
-/Users/eshwar/Desktop/Z/.venv/bin/python -m pip install -U pip
-/Users/eshwar/Desktop/Z/.venv/bin/python -m pip install -e .[dev]
-/Users/eshwar/Desktop/Z/.venv/bin/pip install pydantic-settings pyarrow
 
-# 2. Install frontend dependencies
-cd ../frontend
-npm install
+# Create virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-# 3. Configure environment (optional)
-cd ../backend
-cp .env.example .env
-# Edit .env to add Discord webhook URL if desired
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the backend
+uvicorn app.main:app --reload --port 8001
 ```
 
-### Run the Stack
+Backend will be available at:
+- API: http://localhost:8001/api
+- Docs: http://localhost:8001/docs
+
+#### 2. Frontend Setup
 
 ```bash
-# Terminal 1: Backend API
-cd backend
-/Users/eshwar/Desktop/Z/.venv/bin/python -m uvicorn app.main:app --reload
-
-# Terminal 2: Frontend Dashboard
+# Navigate to frontend directory
 cd frontend
+
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
 ```
 
-**Access the Dashboard:**
-- **Frontend**: http://localhost:5173
-- **API Documentation**: http://localhost:8000/docs
-- **Backend Health**: http://localhost:8000/api/health
+Frontend will be available at: http://localhost:5173
 
-## ⚙️ Configuration
+### Environment Variables
 
-Edit `backend/.env` to customize:
-
+#### Backend (`backend/.env`)
 ```bash
 # Enable/disable live data fetching
 ENABLE_LIVE_DATA=true
@@ -106,7 +146,10 @@ ENABLE_LIVE_DATA=true
 # Refresh interval (minutes)
 REFRESH_INTERVAL_MINUTES=5
 
-# Discord webhook for alerts
+# Database path (relative to backend directory)
+DB_PATH=data/zcash_pulse.duckdb
+
+# Discord webhook for alerts (optional)
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR-WEBHOOK
 
 # Anomaly detection settings
@@ -115,27 +158,13 @@ ANOMALY_ZSCORE_THRESHOLD=2.5
 ALERT_SEVERITY_THRESHOLD=medium
 ```
 
-## 🧪 Testing
-
+#### Frontend (`frontend/.env.local`)
 ```bash
-# Run backend tests
-cd backend
-/Users/eshwar/Desktop/Z/.venv/bin/python -m pytest
+# For local development (uses Vite proxy)
+# No VITE_API_URL needed - will proxy to localhost:8001
 
-# Test API connections
-cd ..
-/Users/eshwar/Desktop/Z/.venv/bin/python -c "
-import asyncio
-from data.etl.sources.zchain_client import ZchainClient
-from data.etl.sources.coingecko_client import CoinGeckoClient
-
-async def test():
-    async with ZchainClient() as z, CoinGeckoClient() as c:
-        print('Zchain:', 'OK' if await z.test_connection() else 'FAIL')
-        print('CoinGecko:', 'OK' if await c.test_connection() else 'FAIL')
-
-asyncio.run(test())
-"
+# For production builds
+VITE_API_URL=https://your-backend-url.herokuapp.com
 ```
 
 ## 📈 Key Metrics Tracked
@@ -159,6 +188,7 @@ asyncio.run(test())
 - Shielded transaction ratio
 - Shielded volume ratio
 - Privacy adoption trends
+- Pool migration velocity
 
 ## 🔔 Anomaly Detection
 
@@ -174,6 +204,43 @@ Alerts are:
 - Sent to Discord/Slack webhooks (if configured)
 - Displayed in the dashboard with severity color-coding
 
+## 🧪 Testing
+
+```bash
+# Run backend tests
+cd backend
+pytest
+
+# Test specific modules
+pytest tests/test_metrics_service.py -v
+
+# Test API endpoints
+curl http://localhost:8001/api/health
+curl http://localhost:8001/api/metrics/summary
+```
+
+## 🚀 Deployment
+
+### Production Deployment
+
+**Backend**: Deployed on Heroku
+- Automatic deployment from GitHub
+- Uses `Procfile` for startup command
+- Python 3.11.9 runtime
+
+**Frontend**: Deployed on Vercel
+- Automatic deployment from GitHub
+- Uses `vercel.json` for configuration
+- Environment variables set in Vercel dashboard
+
+### Deployment Files
+
+- `Procfile` - Heroku web process configuration
+- `runtime.txt` - Python version specification
+- `requirements.txt` - Python dependencies (root)
+- `vercel.json` - Vercel build and routing configuration
+- `frontend/.env.production` - Production environment template
+
 ## 🎯 Hackathon Highlights
 
 **What Makes This Special:**
@@ -182,36 +249,56 @@ Alerts are:
 3. **Anomaly Detection**: Statistical analysis, not just simple thresholds
 4. **Production Quality**: Error handling, logging, configuration management
 5. **Beautiful UI**: Modern design with glassmorphism and smooth animations
+6. **Full Stack Deployment**: Production-ready on Heroku + Vercel
+7. **TypeScript Frontend**: Type-safe React components
 
-## 📁 Project Structure
+## 🛠️ Tech Stack
 
-```
-├── backend/
-│   ├── app/
-│   │   ├── api/          # FastAPI routes
-│   │   ├── services/      # Business logic & analytics
-│   │   ├── models/        # Pydantic data models
-│   │   ├── jobs/          # APScheduler tasks
-│   │   ├── db/            # Database client
-│   │   └── config.py      # Settings management
-│   └── tests/             # Test suite
-├── data/
-│   ├── etl/
-│   │   ├── sources/       # API clients (Zchain, CoinGecko)
-│   │   ├── transformers/  # Anomaly detection
-│   │   └── pipeline.py    # ETL orchestration
-│   └── sample/            # Sample data for development
-└── frontend/
-    ├── src/
-    │   ├── components/    # React components
-    │   ├── hooks/         # React Query hooks
-    │   └── styles/        # Tailwind CSS
-    └── public/            # Static assets
-```
+**Backend:**
+- FastAPI - Modern Python web framework
+- DuckDB - Embedded analytics database
+- Polars - High-performance data processing
+- APScheduler - Background job scheduling
+- Pydantic - Data validation
+- HTTPX - Async HTTP client
+
+**Frontend:**
+- React 18 - UI library
+- TypeScript - Type safety
+- Vite - Build tool
+- Tailwind CSS - Utility-first styling
+- Recharts - Chart library
+- React Query - Data fetching
+- Axios - HTTP client
+
+**APIs:**
+- Zchain API - Zcash blockchain data
+- CoinGecko API - Market data
+
+## 📝 API Endpoints
+
+### Metrics
+- `GET /api/health` - Health check
+- `GET /api/metrics/summary` - Dashboard summary
+- `GET /api/metrics/kpis` - Key performance indicators
+- `GET /api/metrics/daily` - Daily historical metrics
+- `GET /api/metrics/privacy` - Privacy metrics
+- `GET /api/metrics/pool-migration` - Pool migration trends
+- `GET /api/metrics/momentum` - Network momentum
+- `GET /api/metrics/metadata` - Data freshness info
+
+### Alerts
+- `GET /api/alerts` - Recent alerts with filtering
+
+### Export
+- `GET /api/export/metrics/csv` - Export metrics as CSV
+- `GET /api/export/metrics/json` - Export metrics as JSON
+- `GET /api/export/alerts/csv` - Export alerts as CSV
+- `GET /api/export/alerts/json` - Export alerts as JSON
 
 ## 🤝 Contributing
 
-Built for the Zcash Data & Analytics hackathon bounty. Open source and ready for community contributions!
+Built for the Zcash Data & Analytics hackathon. Open source and ready for community contributions!
 
 ## 📜 License
 
@@ -219,7 +306,10 @@ MIT
 
 ---
 
-**Built with:** FastAPI • React • DuckDB • Tailwind CSS • Recharts • Polars • APScheduler
+**Built with ❤️ for the Zcash community**
+
+**Tech Stack:** FastAPI • React • TypeScript • DuckDB • Tailwind CSS • Recharts • Polars • APScheduler
+
+**Deployed on:** Heroku • Vercel
 
 **APIs:** Zchain • CoinGecko
-
